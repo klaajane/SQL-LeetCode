@@ -20,6 +20,7 @@ Repository to store my answers for SQL LeetCode problems
 | [1811-find-interview-candidates](https://github.com/klaajane/LeetCode/tree/main/1811-find-interview-candidates/) | Medium |
 | [1875-group-employees-of-the-same-salary](https://github.com/klaajane/LeetCode/tree/main/1875-group-employees-of-the-same-salary/) | Medium |
 | [1892-page-recommendations-ii](https://github.com/klaajane/LeetCode/tree/main/1892-page-recommendations-ii/) | Hard |
+| [1919-leetcodify-similar-friends](https://github.com/klaajane/LeetCode/tree/main/1919-leetcodify-similar-friends/) | Hard |
 | [2051-the-category-of-each-member-in-the-store](https://github.com/klaajane/LeetCode/tree/main/2051-the-category-of-each-member-in-the-store/) | Medium |
 | [2084-drop-type-1-orders-for-customers-with-type-0-orders](https://github.com/klaajane/LeetCode/tree/main/2084-drop-type-1-orders-for-customers-with-type-0-orders/) | Medium |
 | [2112-the-airport-with-the-most-traffic](https://github.com/klaajane/LeetCode/tree/main/2112-the-airport-with-the-most-traffic/) | Medium |
