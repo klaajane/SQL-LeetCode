@@ -7,7 +7,7 @@ FROM
 WHERE
     l1.song_id = l2.song_id
    AND l1.day = l2.day
-   AND l1.user_id != l2.user_id
+   AND l1.user_id <> l2.user_id
    AND (l1.user_id, l2.user_id) IN (SELECT * FROM friendship)
 GROUP BY 1, 2, l2.day
 HAVING COUNT(DISTINCT l1.song_id) >= 3;
