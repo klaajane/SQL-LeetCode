@@ -6,17 +6,18 @@
     -- 2/ only return teams with at least two people (GROUP BY & COUNT)
 
 
-SELECT DISTINCT
-    e1.employee_id,
-    e1.name,
-    e1.salary,
+SELECT
+    employee_id,
+    name,
+    salary,
     DENSE_RANK() OVER (
-        ORDER BY e1.salary 
+        ORDER BY salary 
     ) AS team_id
-FROM employees e1
-JOIN employees e2
-    ON e1.employee_id <> e2.employee_id
-    AND e1.salary = e2.salary
+FROM employees
+WHERE salary IN (SELECT salary FROM employees GROUP BY 1 HAVING COUNT(*) > 1)
 ORDER BY 
     team_id,
     employee_id
+
+-- why do we need DISTINCT in a self-join?
+-- why DENSE_RANK and not RANK or ROW_NUMBER?
