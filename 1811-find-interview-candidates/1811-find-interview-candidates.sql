@@ -1,63 +1,61 @@
 --> GOAL:
-    --> find name and mail of interview candidates using the following conditions:
-        --> won 3 medals in 3 consecutive contests
-        --> won a gold medal
+    --> report name and mail for all interview candidates
 
 --> pseucode:
-    --> data prep:
+    --> data prep: unpivot the columns so we can create a one user_id column (UNION ALL)
 
-    WITH contests_reshaped AS (
-    SELECT contest_id, gold_medal AS winner_id, 'gold' AS medal_type FROM contests
-        UNION ALL
-    SELECT contest_id, silver_medal AS winner_id, 'silver' AS medal_type FROM contests
-        UNION ALL
-    SELECT contest_id, bronze_medal AS winner_id, 'bronze' AS medal_type FROM contests
+    WITH contests_unpivoted AS (
+        SELECT contest_id, gold_medal AS user_id, 'gold' AS medal_type FROM contests
+            UNION ALL 
+        SELECT contest_id, silver_medal AS user_id, 'silver' AS medal_type FROM contests
+            UNION ALL
+        SELECT contest_id, bronze_medal AS user_id, 'bronze' AS medal_type FROM contests
+    )
+    ,
+
+    --> 1/ find users who won any medal in 3 or more consecutive contests (Gap and Island)
+    contests_islands AS (
+        SELECT
+            user_id,
+            contest_id
+            -
+            ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY contest_id)
+            AS island_id
+        FROM contests_unpivoted
+    ),
+
+    contests_first_condition AS (
+        SELECT user_id
+        FROM contests_islands
+        GROUP BY user_id, island_id
+        HAVING COUNT(*) >= 3 
+    )
+    --> 2/ find users who won GOLD medal in 3 or more contests (WHERE = 'gold')
+    ,
+
+    contests_second_condition AS (
+        SELECT user_id
+        FROM contests_unpivoted
+        WHERE medal_type = 'gold'
+        GROUP BY user_id
+        HAVING COUNT(user_id) >= 3
+    )
+    ,
+
+    qualified_users AS (
+    SELECT user_id FROM contests_first_condition
+        UNION 
+    SELECT user_id FROM contests_second_condition
+    )
+    ,
+
+    final_answer AS (
+        SELECT
+            u.name,
+            u.mail
+        FROM qualified_users q
+        JOIN users u
+            ON u.user_id = q.user_id
     )
 
-    --> 1/ find users who won medals in 3 consecutive contests
-,
-
-winners_gap_and_island AS (
-    SELECT
-        winner_id,
-        contest_id,
-        contest_id
-        -
-        ROW_NUMBER() OVER (PARTITION BY winner_id ORDER BY contest_id)
-        AS island_id
-    FROM contests_reshaped
-)
-,
-
-consecutive_wins_condition AS (
-    SELECT DISTINCT
-        winner_id
-    FROM winners_gap_and_island
-    GROUP BY winner_id, island_id
-    HAVING COUNT(island_id) >= 3
-)
-
-    --> 2/ won the gold medal in 3 or more different contests
-,
-
-gold_medal_condition AS (
-    SELECT winner_id
-    FROM contests_reshaped
-    WHERE medal_type = 'gold'
-    GROUP BY winner_id
-    HAVING COUNT(*) >= 3
-)
-,
-
-qualified_winners AS (
-    SELECT winner_id FROM consecutive_wins_condition
-    UNION 
-    SELECT winner_id FROM gold_medal_condition
-)
-
-SELECT
-    u.name,
-    u.mail
-FROM qualified_winners q
-INNER JOIN users u
-    ON q.winner_id = u.user_id
+    SELECT * FROM final_answer
