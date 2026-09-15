@@ -1,26 +1,45 @@
---------------------------------------------- SOLUTION ------------------------------------------
-WITH candidates_rolling_salary AS (
-    SELECT
+-- clarifying questions:
+    -- the table only includes Senior and Junior candidates?
+
+
+-- approach:
+    -- 0/ data prep:
+    
+    WITH cumulative_salary_by_experience AS (
+        SELECT
         employee_id,
         experience,
-        SUM(salary) OVER (PARTITION BY experience
-                            ORDER BY salary, employee_id ASC) AS "salary_rolling_sum"
-    FROM
-        candidates
-)
+        SUM(salary) OVER (
+            PARTITION BY experience 
+            ORDER BY salary
+            ROWS UNBOUNDED PRECEDING
+            ) AS cumulative_sum
+    FROM candidates
+    )
 
-SELECT 'Senior' experience, COUNT(*) "accepted_candidates" 
-FROM candidates_rolling_salary 
-WHERE experience = 'Senior' AND salary_rolling_sum < 70000
+    -- 1/ find out the qualifying Seniors (calculate the cum sum of Senior salaries)
+,
+    qualified_seniors AS (
+    SELECT employee_id, experience, cumulative_sum
+    FROM cumulative_salary_by_experience
+    WHERE 
+        experience = 'Senior' 
+        AND
+        cumulative_sum <= 70000
+    )
+
+    -- 2/ find out the qualifying Juniors
+,
+
+    qualified_juniors AS (
+    SELECT employee_id, experience, cumulative_sum
+    FROM cumulative_salary_by_experience
+    WHERE 
+        experience = 'Junior'
+        AND
+        cumulative_sum <= 70000 - (SELECT COALESCE(MAX(cumulative_sum), 0) FROM qualified_seniors)
+    )
+
+SELECT 'Senior' AS experience, COUNT(*) AS accepted_candidates FROM qualified_seniors
     UNION ALL
-SELECT 'Junior' experience, COUNT(*) "accepted_candidates" 
-FROM candidates_rolling_salary 
-WHERE experience = 'Junior' 
-AND salary_rolling_sum <= (SELECT 70000 - COALESCE (MAX(salary_rolling_sum), 0) 
-                            FROM candidates_rolling_salary 
-                            WHERE experience = 'Senior' AND salary_rolling_sum < 70000)
----------------------------------------------- NOTES --------------------------------------------
---> company wants to hire a new employee, budget is 70,000
---> goal: hiring the largest 3 of seniors
---> use remaining budget to hire juniors
--------------------------------------------------------------------------------------------------
+SELECT 'Junior' AS experience, COUNT(*) AS accepted_candidates FROM qualified_juniors
