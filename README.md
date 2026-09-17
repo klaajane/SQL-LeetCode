@@ -28,6 +28,7 @@ Repository to store my answers for SQL LeetCode problems
 | [2142-the-number-of-passengers-in-each-bus-i](https://github.com/klaajane/LeetCode/tree/main/2142-the-number-of-passengers-in-each-bus-i/) | Medium |
 | [2238-number-of-times-a-driver-was-a-passenger](https://github.com/klaajane/LeetCode/tree/main/2238-number-of-times-a-driver-was-a-passenger/) | Medium |
 | [2292-products-with-three-or-more-orders-in-two-consecutive-years](https://github.com/klaajane/LeetCode/tree/main/2292-products-with-three-or-more-orders-in-two-consecutive-years/) | Medium |
+| [2308-arrange-table-by-gender](https://github.com/klaajane/LeetCode/tree/main/2308-arrange-table-by-gender/) | Medium |
 | [3050-pizza-toppings-cost-analysis](https://github.com/klaajane/LeetCode/tree/main/3050-pizza-toppings-cost-analysis/) | Medium |
 | [3058-friends-with-no-mutual-friends](https://github.com/klaajane/LeetCode/tree/main/3058-friends-with-no-mutual-friends/) | Medium |
 | [3060-user-activities-within-time-bounds](https://github.com/klaajane/LeetCode/tree/main/3060-user-activities-within-time-bounds/) | Hard |
